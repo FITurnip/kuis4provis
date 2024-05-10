@@ -41,7 +41,7 @@ class PaymentPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cart'),
+        title: Text('Payment'),
       ),
       body: Column(
         children: [
