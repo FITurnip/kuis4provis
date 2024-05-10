@@ -1,19 +1,102 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:kuis4/auth/shared_preferences_helper.dart';
+import 'package:kuis4/barayafood_uri.dart';
 import 'package:kuis4/cart/payment.dart';
 
-class CartPage extends StatelessWidget {
-  late List<Map<String, dynamic>> foodList;
-  String status = "Belum Dibayar";
+class CartPage extends StatefulWidget {
+  final List<Map<String, dynamic>> foodList;
 
-  CartPage({required this.foodList}) {
-    this.foodList = foodList;
+  CartPage({required this.foodList});
+
+  @override
+  _CartPageState createState() => _CartPageState();
+}
+
+class _CartPageState extends State<CartPage> {
+  late List<Map<String, dynamic>> cartItems = []; // Initialize cartItems as an empty list
+  late String status = "";
+  late String clientId = '', clientToken = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCartItems();
   }
 
-  final List<Map<String, dynamic>> cartItems = [
-    {"item_id": 1, "user_id": 1, "quantity": 2, "id": 1},
-    {"item_id": 2, "user_id": 1, "quantity": 1, "id": 2},
-    {"item_id": 3, "user_id": 1, "quantity": 3, "id": 3}
-  ];
+  void fetchCartItems() async {
+    clientId = '${await SharedPreferencesHelper.getPreference('user_id')}';
+    clientToken = await SharedPreferencesHelper.getPreference('access_token');
+
+    final response = await http.get(
+      Uri.parse('${baseUrl}carts/${clientId}?skip=0&limit=100'),
+      headers: {
+        'Authorization': 'Bearer $clientToken',
+        'Client-ID': clientId,
+      },
+    );
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = json.decode(response.body);
+      setState(() {
+        cartItems = responseData.map((item) => item as Map<String, dynamic>).toList();
+      });
+
+      final statusResponse = await http.get(
+        Uri.parse('${baseUrl}get_status/${clientId}'),
+        headers: {
+          'Authorization': 'Bearer $clientToken',
+          'Client-ID': clientId,
+        },
+      );
+
+      if (statusResponse.statusCode == 200) {
+        final dynamic statusData = json.decode(statusResponse.body);
+        final String curStatus = statusData['status']['status'] ?? 'No Order';
+        setState(() {
+          status = curStatus;
+        });
+      } else {
+        throw Exception('Failed to get status');
+      }
+    } else {
+      throw Exception('Failed to load cart items');
+    }
+  }
+
+  void setStatus(String url) async {
+    final statusResponse = await http.post(
+      Uri.parse(baseUrl + url + '/$clientId'),
+      headers: {
+        'Authorization': 'Bearer $clientToken',
+        'Client-ID': clientId,
+      },
+      body: json.encode({
+        'user_id': clientId
+      })
+    );
+
+    print('body');
+    if (statusResponse.statusCode == 200) {
+      final dynamic statusData = json.decode(statusResponse.body);
+      final String curStatus = statusData['status']['status'] ?? 'No Order';
+      setState(() {
+        status = curStatus;
+      });
+    } else {
+      throw Exception('Failed to get status');
+    }
+  }
+
+  void refetchCartItems() async {
+    switch(status) {
+      case 'belum_bayar':
+      setStatus('pembayaran');
+      break;
+      default:
+      break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +107,15 @@ class CartPage extends StatelessWidget {
       body: Column(
         children: [
           Padding(
-            padding:
-                const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 10.0),
+            padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 10.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Status : $status'),
-                ElevatedButton(onPressed: () {}, child: Icon(Icons.refresh))
+                Text('Status : ${status}'),
+                ElevatedButton(
+                  onPressed: refetchCartItems, // Refresh button now refreshes the cart items
+                  child: Icon(Icons.refresh),
+                )
               ],
             ),
           ),
@@ -39,7 +124,7 @@ class CartPage extends StatelessWidget {
               itemCount: cartItems.length,
               itemBuilder: (BuildContext context, int index) {
                 final cartItem = cartItems[index];
-                final foodItem = foodList
+                final foodItem = widget.foodList
                     .firstWhere((food) => food['id'] == cartItem['item_id']);
                 final totalPrice = cartItem['quantity'] * foodItem['price'];
                 return ListTile(
@@ -84,7 +169,7 @@ class CartPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: ((context) => PaymentPage(foodList: foodList))));
+                      builder: ((context) => PaymentPage(foodList: widget.foodList))));
                 },
                 child: Text('Checkout'),
               ),
