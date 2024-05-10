@@ -3,6 +3,7 @@ import 'package:view/cart/payment.dart';
 
 class CartPage extends StatelessWidget {
   late List<Map<String, dynamic>> foodList;
+  String status = "Belum Dibayar";
 
   CartPage({required this.foodList}) {
     this.foodList = foodList;
@@ -28,7 +29,7 @@ class CartPage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Status : '),
+                Text('Status : $status'),
                 ElevatedButton(onPressed: () {}, child: Icon(Icons.refresh))
               ],
             ),
@@ -85,7 +86,7 @@ class CartPage extends StatelessWidget {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: ((context) => PaymentPage(foodList: foodList))));
                 },
-                child: Text('Proceed to Payment'),
+                child: Text('Checkout'),
               ),
             ],
           ),

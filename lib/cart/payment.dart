@@ -36,6 +36,7 @@ class PaymentPage extends StatelessWidget {
       final totalPrice = cartItem['quantity'] * foodItem['price'];
       totalItems += cartItem['quantity'] as int;
       totalPriceAllItems += totalPrice as int;
+      print('total items ${totalItems}');
     }
 
     return Scaffold(
