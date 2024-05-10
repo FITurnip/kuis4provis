@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:view/auth/auth.dart';
+import 'package:kuis4/auth/auth.dart';
 
 void main() {
   runApp(MyApp());

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:view/cart/payment.dart';
+import 'package:kuis4/cart/payment.dart';
 
 class CartPage extends StatelessWidget {
   late List<Map<String, dynamic>> foodList;

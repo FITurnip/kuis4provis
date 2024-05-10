@@ -100,7 +100,7 @@ class PaymentPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Make A Payment'),
+                  child: Text('Order'),
                 ),
               ],
             ),

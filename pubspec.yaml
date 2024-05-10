@@ -1,16 +1,15 @@
-name: view
+name: kuis4
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: '>=3.3.4 <4.0.0'
 
 dependencies:
-  auth: ^8.2.0
   flutter:
     sdk: flutter
-  http: ^0.13.6
+  http: ^0.13.5
 
 dev_dependencies:
   flutter_test:
