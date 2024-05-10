@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kuis4/cart/carts.dart';
+import 'package:view/cart/carts.dart';
 
 class FoodListPage extends StatefulWidget {
   @override
@@ -63,7 +63,8 @@ class _FoodListPageState extends State<FoodListPage> {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => CartPage(foodList: foodList)));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => CartPage(foodList: foodList)));
             },
           ),
         ],
@@ -84,11 +85,10 @@ class _FoodListPageState extends State<FoodListPage> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
-                  // Add your search onPressed logic here
-                },
-                child: Icon(Icons.search)
-              )
+                  onPressed: () {
+                    // Add your search onPressed logic here
+                  },
+                  child: Icon(Icons.search))
             ],
           ),
           Expanded(
@@ -110,9 +110,18 @@ class _FoodListPageState extends State<FoodListPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(food['title'], style: TextStyle(fontSize: 14.0), overflow: TextOverflow.ellipsis,),
-                            Text(food['description'], style: TextStyle(fontSize: 12.0), overflow: TextOverflow.ellipsis,),
-                            Text('\$${food['price']}', style: TextStyle(fontSize: 12.0)),
+                            Text(
+                              food['title'],
+                              style: TextStyle(fontSize: 14.0),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              food['description'],
+                              style: TextStyle(fontSize: 12.0),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text('\$${food['price']}',
+                                style: TextStyle(fontSize: 12.0)),
                           ],
                         ),
                       ),

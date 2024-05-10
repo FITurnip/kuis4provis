@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kuis4/cart/payment.dart';
+import 'package:view/cart/payment.dart';
 
 class CartPage extends StatelessWidget {
   late List<Map<String, dynamic>> foodList;
@@ -9,24 +9,9 @@ class CartPage extends StatelessWidget {
   }
 
   final List<Map<String, dynamic>> cartItems = [
-    {
-      "item_id": 1,
-      "user_id": 1,
-      "quantity": 2,
-      "id": 1
-    },
-    {
-      "item_id": 2,
-      "user_id": 1,
-      "quantity": 1,
-      "id": 2
-    },
-    {
-      "item_id": 3,
-      "user_id": 1,
-      "quantity": 3,
-      "id": 3
-    }
+    {"item_id": 1, "user_id": 1, "quantity": 2, "id": 1},
+    {"item_id": 2, "user_id": 1, "quantity": 1, "id": 2},
+    {"item_id": 3, "user_id": 1, "quantity": 3, "id": 3}
   ];
 
   @override
@@ -38,7 +23,8 @@ class CartPage extends StatelessWidget {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 10.0),
+            padding:
+                const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 10.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -52,7 +38,8 @@ class CartPage extends StatelessWidget {
               itemCount: cartItems.length,
               itemBuilder: (BuildContext context, int index) {
                 final cartItem = cartItems[index];
-                final foodItem = foodList.firstWhere((food) => food['id'] == cartItem['item_id']);
+                final foodItem = foodList
+                    .firstWhere((food) => food['id'] == cartItem['item_id']);
                 final totalPrice = cartItem['quantity'] * foodItem['price'];
                 return ListTile(
                   title: Row(
@@ -95,7 +82,8 @@ class CartPage extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: ((context) => PaymentPage(foodList: foodList))));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: ((context) => PaymentPage(foodList: foodList))));
                 },
                 child: Text('Proceed to Payment'),
               ),
