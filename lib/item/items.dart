@@ -9,6 +9,8 @@ import 'dart:convert';
 import 'package:kuis4/test_oauth.dart';
 
 class FoodListPage extends StatefulWidget {
+  const FoodListPage({super.key});
+
   @override
   _FoodListPageState createState() => _FoodListPageState();
 }
@@ -40,9 +42,9 @@ class _FoodListPageState extends State<FoodListPage> {
       setState(() {
         foodList.clear();
         List<dynamic> jsonData = json.decode(response.body);
-        jsonData.forEach((item) {
+        for (var item in jsonData) {
           foodList.add(Map<String, dynamic>.from(item));
-        });
+        }
       });
     } else {
       throw Exception('Failed to load data');
@@ -53,18 +55,18 @@ class _FoodListPageState extends State<FoodListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Food List'),
+        title: const Text('Food List'),
       ),
       bottomNavigationBar: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () {
               showDialog(context: context, builder: (context) {
                 return AlertDialog(
-                  title: Text('Logout'),
-                  content: Text('Are you sure you want to logout?'),
+                  title: const Text('Logout'),
+                  content: const Text('Are you sure you want to logout?'),
                   actions: [
                     TextButton(
                       onPressed: () {
@@ -72,11 +74,11 @@ class _FoodListPageState extends State<FoodListPage> {
                         SharedPreferencesHelper.deletePreference('access_token');
                         Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginRegisterPage()), (route) => false);
                       },
-                      child: Text('Logout'),
+                      child: const Text('Logout'),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: Text('Cancel'),
+                      child: const Text('Cancel'),
                     ),
                   ],
                 );
@@ -84,7 +86,7 @@ class _FoodListPageState extends State<FoodListPage> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.shopping_cart),
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => CartPage(foodList: foodList)));
@@ -98,8 +100,8 @@ class _FoodListPageState extends State<FoodListPage> {
             children: [
               SizedBox(
                 width: MediaQuery.of(context).size.width * 3 / 4,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 15.0),
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 15.0),
                   child: TextField(
                     decoration: InputDecoration(
                       hintText: 'Search...',
@@ -111,7 +113,7 @@ class _FoodListPageState extends State<FoodListPage> {
                   onPressed: () {
                     // Add your search onPressed logic here
                   },
-                  child: Icon(Icons.search))
+                  child: const Icon(Icons.search))
             ],
           ),
           Expanded(
@@ -121,7 +123,7 @@ class _FoodListPageState extends State<FoodListPage> {
                 final food = foodList[index];
                 final int itemId = food['id'];
                 return ListTile(
-                  leading: ImageDownloadWidget('${baseUrl}items_image/${itemId}'),
+                  leading: ImageDownloadWidget('${baseUrl}items_image/$itemId'),
                   title: Row(
                     children: [
                       Expanded(
@@ -130,16 +132,16 @@ class _FoodListPageState extends State<FoodListPage> {
                           children: [
                             Text(
                               food['title'],
-                              style: TextStyle(fontSize: 14.0),
+                              style: const TextStyle(fontSize: 14.0),
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               food['description'],
-                              style: TextStyle(fontSize: 12.0),
+                              style: const TextStyle(fontSize: 12.0),
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text('Rp${food['price']}',
-                                style: TextStyle(fontSize: 12.0)),
+                                style: const TextStyle(fontSize: 12.0)),
                           ],
                         ),
                       ),
@@ -149,7 +151,7 @@ class _FoodListPageState extends State<FoodListPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.remove),
+                        icon: const Icon(Icons.remove),
                         onPressed: () {
                           setState(() {
                             if (quantityMap.containsKey(itemId)) {
@@ -162,10 +164,10 @@ class _FoodListPageState extends State<FoodListPage> {
                       ),
                       Text(
                         quantityMap[itemId]?.toString() ?? '0',
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
                       IconButton(
-                        icon: Icon(Icons.add),
+                        icon: const Icon(Icons.add),
                         onPressed: () {
                           setState(() {
                             if (quantityMap.containsKey(itemId)) {
