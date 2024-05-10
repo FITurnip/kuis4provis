@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:kuis4/auth/auth.dart';
 import 'package:kuis4/auth/shared_preferences_helper.dart';
 import 'package:kuis4/cart/carts.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:kuis4/test_oauth.dart';
 
 class FoodListPage extends StatefulWidget {
   @override
@@ -9,52 +13,40 @@ class FoodListPage extends StatefulWidget {
 }
 
 class _FoodListPageState extends State<FoodListPage> {
-  final List<Map<String, dynamic>> foodList = [
-    {
-      "title": "Mie Bakso",
-      "description": "Mie Bakso gurih dengan bakso yang besar",
-      "price": 12000,
-      "img_name": "bakso.png",
-      "id": 1
-    },
-    {
-      "title": "Nasi Goreng",
-      "description": "Nasi goreng enak dan melimpahr",
-      "price": 10000,
-      "img_name": "nasi_goreng.png",
-      "id": 2
-    },
-    {
-      "title": "Nasi Kuning",
-      "description": "Nasi kuning lezat pisan",
-      "price": 17000,
-      "img_name": "nasi_kuning.png",
-      "id": 3
-    },
-    {
-      "title": "Kupat Tahu",
-      "description": "Kupat Tahu dengan kuah melimpah",
-      "price": 5000,
-      "img_name": "kupat_tahu.png",
-      "id": 4
-    },
-    {
-      "title": "Pecel Lele",
-      "description": "Pecel lele dengan ikan lele yang segar",
-      "price": 11000,
-      "img_name": "pecel_lele.png",
-      "id": 5
-    },
-    {
-      "title": "Ayam Geprek",
-      "description": "Pecel lele dengan ikan lele yang segar",
-      "price": 11000,
-      "img_name": "ayam_geprek.png",
-      "id": 6
-    }
-  ];
+  List<Map<String, dynamic>> foodList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
 
   Map<int, int> quantityMap = {};
+
+  void fetchData() async {
+    final String clientId = '${await SharedPreferencesHelper.getPreference('user_id')}';
+    final String clientToken = await SharedPreferencesHelper.getPreference('access_token');
+
+    final response = await http.get(
+      Uri.parse('http://146.190.109.66:8000/items'),
+      headers: {
+        'Authorization': 'Bearer $clientToken',
+        'Client-ID': clientId,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        foodList.clear();
+        List<dynamic> jsonData = json.decode(response.body);
+        jsonData.forEach((item) {
+          foodList.add(Map<String, dynamic>.from(item));
+        });
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,12 +120,7 @@ class _FoodListPageState extends State<FoodListPage> {
                 final food = foodList[index];
                 final int itemId = food['id'];
                 return ListTile(
-                  leading: Image.network(
-                    'https://i.pinimg.com/564x/1c/dc/6d/1cdc6da3ae6c904f7570aa96dba099b1.jpg',
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
-                  ),
+                  leading: ImageDownloadWidget('http://146.190.109.66:8000/items_image/${itemId}'),
                   title: Row(
                     children: [
                       Expanded(
@@ -150,7 +137,7 @@ class _FoodListPageState extends State<FoodListPage> {
                               style: TextStyle(fontSize: 12.0),
                               overflow: TextOverflow.ellipsis,
                             ),
-                            Text('\$${food['price']}',
+                            Text('Rp${food['price']}',
                                 style: TextStyle(fontSize: 12.0)),
                           ],
                         ),
