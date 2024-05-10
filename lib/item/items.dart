@@ -63,7 +63,7 @@ class _FoodListPageState extends State<FoodListPage> {
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => CartPage()));
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => CartPage(foodList: foodList)));
             },
           ),
         ],
@@ -74,9 +74,12 @@ class _FoodListPageState extends State<FoodListPage> {
             children: [
               SizedBox(
                 width: MediaQuery.of(context).size.width * 3 / 4,
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search...',
+                    ),
                   ),
                 ),
               ),
