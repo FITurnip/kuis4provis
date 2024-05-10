@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kuis4/auth/auth.dart';
 import 'package:kuis4/auth/shared_preferences_helper.dart';
+import 'package:kuis4/barayafood_uri.dart';
 import 'package:kuis4/cart/carts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -28,7 +29,7 @@ class _FoodListPageState extends State<FoodListPage> {
     final String clientToken = await SharedPreferencesHelper.getPreference('access_token');
 
     final response = await http.get(
-      Uri.parse('http://146.190.109.66:8000/items'),
+      Uri.parse('${baseUrl}items'),
       headers: {
         'Authorization': 'Bearer $clientToken',
         'Client-ID': clientId,
@@ -120,7 +121,7 @@ class _FoodListPageState extends State<FoodListPage> {
                 final food = foodList[index];
                 final int itemId = food['id'];
                 return ListTile(
-                  leading: ImageDownloadWidget('http://146.190.109.66:8000/items_image/${itemId}'),
+                  leading: ImageDownloadWidget('${baseUrl}items_image/${itemId}'),
                   title: Row(
                     children: [
                       Expanded(

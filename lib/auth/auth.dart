@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:kuis4/auth/shared_preferences_helper.dart';
+import 'package:kuis4/barayafood_uri.dart';
 import 'dart:convert';
 import 'package:kuis4/item/items.dart';
 
@@ -46,7 +47,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
 
     try {
       final response = await http.post(
-        Uri.parse("http://146.190.109.66:8000/login"),
+        Uri.parse('${baseUrl}login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },
@@ -84,7 +85,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
 
     try {
       final response = await http.post(
-        Uri.parse("http://146.190.109.66:8000/users/"),
+        Uri.parse('${baseUrl}users/'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },
