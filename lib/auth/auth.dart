@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kuis4/auth/shared_preferences_helper.dart';
 import 'dart:convert';
+import 'package:kuis4/item/items.dart';
 
 class LoginRegisterPage extends StatefulWidget {
   @override
@@ -42,7 +44,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
 
     try {
       final response = await http.post(
-        Uri.parse("http://192.168.100.36:8000/login"),
+        Uri.parse("http://146.190.109.66:8000/login"),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },
@@ -53,9 +55,13 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
 
+        // Save user ID and token to shared preferences
+        await SharedPreferencesHelper.savePreference('user_id', data['user_id']);
+        await SharedPreferencesHelper.savePreference('access_token', data['access_token']);
+
         print(data);
         print('Login successfully');
-        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => FoodListPage()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => FoodListPage()));
       } else {
         print('Gagal Login');
       }

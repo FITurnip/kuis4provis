@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kuis4/auth/auth.dart';
+import 'package:kuis4/auth/shared_preferences_helper.dart';
 import 'package:kuis4/cart/carts.dart';
 
 class FoodListPage extends StatefulWidget {
@@ -59,13 +61,41 @@ class _FoodListPageState extends State<FoodListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Food List'),
-        actions: [
+      ),
+      bottomNavigationBar: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              showDialog(context: context, builder: (context) {
+                return AlertDialog(
+                  title: Text('Logout'),
+                  content: Text('Are you sure you want to logout?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        SharedPreferencesHelper.deletePreference('user_id');
+                        SharedPreferencesHelper.deletePreference('access_token');
+                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginRegisterPage()), (route) => false);
+                      },
+                      child: Text('Logout'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Cancel'),
+                    ),
+                  ],
+                );
+              });
+            },
+          ),
           IconButton(
             icon: Icon(Icons.shopping_cart),
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => CartPage(foodList: foodList)));
-            },
+            }
           ),
         ],
       ),
