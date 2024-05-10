@@ -11,7 +11,7 @@ class LoginRegisterPage extends StatefulWidget {
 
 class _LoginRegisterPageState extends State<LoginRegisterPage> {
   bool _isLoginForm = true;
-  bool _isLoading = false;
+  bool _isLoading = false; // Add loading state variable
 
   void _toggleForm() {
     setState(() {
@@ -29,19 +29,17 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
         child: _isLoginForm
             ? LoginForm(
                 toggleForm: _toggleForm,
-                isLoading: _isLoading,
-                onLogin: _login,
+                isLoading: _isLoading, // Pass loading state to LoginForm
+                onLogin: _login, // Pass login method to LoginForm
               )
-            : RegisterForm(
-                toggleForm: _toggleForm,
-                onRegister: _register), // Pass register method to RegisterForm
+            : RegisterForm(toggleForm: _toggleForm),
       ),
     );
   }
 
   void _login(String username, String password) async {
     setState(() {
-      _isLoading = true;
+      _isLoading = true; // Set loading state to true when login process starts
     });
 
     try {
@@ -50,66 +48,28 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },
-        body: jsonEncode({"username": username, "password": password}),
+        body: jsonEncode(
+            {"username": username, "password": password}),
       );
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
 
-        await SharedPreferencesHelper.savePreference(
-            'user_id', data['user_id']);
-        await SharedPreferencesHelper.savePreference(
-            'access_token', data['access_token']);
+        // Save user ID and token to shared preferences
+        await SharedPreferencesHelper.savePreference('user_id', data['user_id']);
+        await SharedPreferencesHelper.savePreference('access_token', data['access_token']);
 
         print(data);
         print('Login successfully');
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => FoodListPage()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => FoodListPage()));
       } else {
-        print('Failed to login');
+        print('Gagal Login');
       }
     } catch (e) {
       print(e.toString());
     } finally {
       setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _register(String username, String password) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final response = await http.post(
-        Uri.parse("http://146.190.109.66:8000/users/"),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8'
-        },
-        body: jsonEncode({"username": username, "password": password}),
-      );
-
-      if (response.statusCode == 200) {
-        print('Registration successful');
-        // Tampilkan pesan berhasil registrasi
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Registration successful'),
-            duration: Duration(seconds: 2), // Durasi snackbar
-          ),
-        );
-        // Setelah registrasi berhasil, pindahkan pengguna ke halaman login
-        _toggleForm();
-      } else {
-        print('Failed to register');
-      }
-    } catch (e) {
-      print(e.toString());
-    } finally {
-      setState(() {
-        _isLoading = false;
+        _isLoading = false; // Set loading state to false when login process ends
       });
     }
   }
@@ -117,9 +77,10 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
 
 class LoginForm extends StatelessWidget {
   final VoidCallback toggleForm;
-  final bool isLoading;
-  final Function(String, String) onLogin;
+  final bool isLoading; // Add loading state variable
+  final Function(String, String) onLogin; // Add login method
 
+  // Add loading state variable and login method to constructor
   LoginForm({
     required this.toggleForm,
     required this.isLoading,
@@ -147,35 +108,20 @@ class LoginForm extends StatelessWidget {
           ),
           SizedBox(height: 20.0),
           ElevatedButton(
-            onPressed: isLoading
+            onPressed: isLoading // Disable button when loading
                 ? null
                 : () => onLogin(
-                      usernameController.text.toString(),
-                      passwordController.text.toString(),
-                    ),
-            child: isLoading ? CircularProgressIndicator() : Text('Login'),
+                    usernameController.text.toString(),
+                    passwordController.text.toString(),
+                  ),
+            child: isLoading // Show loading indicator if loading
+                ? CircularProgressIndicator()
+                : Text('Login'),
           ),
           SizedBox(height: 20.0),
           TextButton(
             onPressed: toggleForm,
             child: Text('Don\'t have an account? Register here'),
-          ),
-          SizedBox(height: 60.0),
-          Column(
-            children: <Widget>[
-              Text(
-                'Kelompok 28',
-                style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Franklin 220312',
-                style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Roshan 2230121',
-                style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
-              ),
-            ],
           ),
         ],
       ),
@@ -185,12 +131,8 @@ class LoginForm extends StatelessWidget {
 
 class RegisterForm extends StatelessWidget {
   final VoidCallback toggleForm;
-  final Function(String, String) onRegister; // Add onRegister function
 
-  RegisterForm({required this.toggleForm, required this.onRegister});
-
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  RegisterForm({required this.toggleForm});
 
   @override
   Widget build(BuildContext context) {
@@ -200,21 +142,17 @@ class RegisterForm extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           TextFormField(
-            controller: usernameController,
-            decoration: InputDecoration(hintText: 'Username'),
+            decoration: InputDecoration(labelText: 'Email'),
           ),
           SizedBox(height: 20.0),
           TextFormField(
-            controller: passwordController,
-            decoration: InputDecoration(hintText: 'Password'),
+            decoration: InputDecoration(labelText: 'Password'),
+            obscureText: true,
           ),
           SizedBox(height: 20.0),
           ElevatedButton(
             onPressed: () {
-              onRegister(
-                usernameController.text.toString(),
-                passwordController.text.toString(),
-              );
+              // Implement registration functionality here
             },
             child: Text('Register'),
           ),
