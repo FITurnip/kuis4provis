@@ -24,19 +24,28 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isLoginForm ? 'Login' : 'Register'),
+        title: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 30),
+            child: Text(
+              _isLoginForm ? 'Login' : 'Register',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
       ),
-      body: Center(
-        child: _isLoginForm
-            ? LoginForm(
-                toggleForm: _toggleForm,
-                isLoading: _isLoading,
-                onLogin: _login,
-              )
-            : RegisterForm(
-                toggleForm: _toggleForm,
-                onRegister: _register), // Pass register method to RegisterForm
-      ),
+      body: _isLoginForm
+          ? LoginForm(
+              toggleForm: _toggleForm,
+              isLoading: _isLoading,
+              onLogin: _login,
+            )
+          : RegisterForm(
+              toggleForm: _toggleForm,
+              onRegister: _register), // Pass register method to RegisterForm
     );
   }
 
@@ -133,10 +142,11 @@ class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(20.0),
+      padding: EdgeInsets.only(left: 50.0, right: 50.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          SizedBox(height: 90.0),
           TextFormField(
             controller: usernameController,
             decoration: InputDecoration(hintText: 'Username'),
@@ -161,22 +171,10 @@ class LoginForm extends StatelessWidget {
             onPressed: toggleForm,
             child: Text('Don\'t have an account? Register here'),
           ),
-          SizedBox(height: 60.0),
-          Column(
-            children: <Widget>[
-              Text(
-                'Kelompok 28',
-                style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Franklin 220312',
-                style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Roshan 2230121',
-                style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),
-              ),
-            ],
+          SizedBox(height: 100.0),
+          Text(
+            'Franklin Impianro (2203211) || Roshan Syalwan (22203142)',
+            style: TextStyle(fontSize: 12.0, color: Colors.grey),
           ),
         ],
       ),
@@ -196,10 +194,11 @@ class RegisterForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(20.0),
+      padding: EdgeInsets.only(left: 50.0, right: 50.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          SizedBox(height: 90.0),
           TextFormField(
             controller: usernameController,
             decoration: InputDecoration(hintText: 'Username'),
@@ -223,6 +222,11 @@ class RegisterForm extends StatelessWidget {
           TextButton(
             onPressed: toggleForm,
             child: Text('Already have an account? Login here'),
+          ),
+          SizedBox(height: 100.0),
+          Text(
+            'Franklin Impianro (2203211) || Roshan Syalwan (22203142)',
+            style: TextStyle(fontSize: 12.0, color: Colors.grey),
           ),
         ],
       ),
