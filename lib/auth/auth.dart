@@ -68,7 +68,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
         print(data);
-        
+
         await SharedPreferencesHelper.savePreference(
             'user_id', data['user_id']);
         await SharedPreferencesHelper.savePreference(
@@ -184,6 +184,10 @@ class LoginForm extends StatelessWidget {
           ),
           SizedBox(height: 100.0),
           Text(
+            'Kelompok 28',
+            style: TextStyle(fontSize: 12.0, color: Colors.grey),
+          ),
+          Text(
             'Franklin Impianro (2203211) || Roshan Syalwan (22203142)',
             style: TextStyle(fontSize: 12.0, color: Colors.grey),
           ),
@@ -247,6 +251,10 @@ class RegisterForm extends StatelessWidget {
             child: Text('Already have an account? Login here'),
           ),
           SizedBox(height: 100.0),
+          Text(
+            'Kelompok 28',
+            style: TextStyle(fontSize: 12.0, color: Colors.grey),
+          ),
           Text(
             'Franklin Impianro (2203211) || Roshan Syalwan (22203142)',
             style: TextStyle(fontSize: 12.0, color: Colors.grey),
