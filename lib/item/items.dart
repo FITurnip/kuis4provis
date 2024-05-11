@@ -17,7 +17,7 @@ class FoodListPage extends StatefulWidget {
 
 class _FoodListPageState extends State<FoodListPage> {
   List<Map<String, dynamic>> foodList = [];
-  Map<int, int> foodCart = {}; 
+  Map<int, int> foodCart = {};
   final TextEditingController _searchController = TextEditingController();
   late String clientId = "", clientToken = "";
 
@@ -83,9 +83,9 @@ class _FoodListPageState extends State<FoodListPage> {
     if (response.statusCode == 200) {
       print("Order successfully delete.");
     } else {
-      throw Exception('Failed to delete order. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to delete order. Status code: ${response.statusCode}');
     }
-    
   }
 
   void setOrder(int itemId, int total) async {
@@ -118,21 +118,19 @@ class _FoodListPageState extends State<FoodListPage> {
     if (response.statusCode == 200) {
       print("Order successfully set.");
     } else {
-      throw Exception('Failed to set order. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to set order. Status code: ${response.statusCode}');
     }
   }
 
   void setStatus(String url) async {
-    final statusResponse = await http.post(
-      Uri.parse(baseUrl + url + '/$clientId'),
-      headers: {
-        'Authorization': 'Bearer $clientToken',
-        'Client-ID': clientId,
-      },
-      body: json.encode({
-        'user_id': clientId
-      })
-    );
+    final statusResponse =
+        await http.post(Uri.parse(baseUrl + url + '/$clientId'),
+            headers: {
+              'Authorization': 'Bearer $clientToken',
+              'Client-ID': clientId,
+            },
+            body: json.encode({'user_id': clientId}));
 
     if (statusResponse.statusCode == 200) {
       print('berhasil');
@@ -142,16 +140,13 @@ class _FoodListPageState extends State<FoodListPage> {
   }
 
   void setInitStatus() async {
-    final statusResponse = await http.post(
-      Uri.parse(baseUrl + 'set_status_harap_bayar/$clientId'),
-      headers: {
-        'Authorization': 'Bearer $clientToken',
-        'Client-ID': clientId,
-      },
-      body: json.encode({
-        'user_id': clientId
-      })
-    );
+    final statusResponse =
+        await http.post(Uri.parse(baseUrl + 'set_status_harap_bayar/$clientId'),
+            headers: {
+              'Authorization': 'Bearer $clientToken',
+              'Client-ID': clientId,
+            },
+            body: json.encode({'user_id': clientId}));
 
     print('body');
     if (statusResponse.statusCode == 200) {
@@ -165,148 +160,193 @@ class _FoodListPageState extends State<FoodListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Food List'),
-      ),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              showDialog(context: context, builder: (context) {
-                return AlertDialog(
-                  title: const Text('Logout'),
-                  content: const Text('Are you sure you want to logout?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        SharedPreferencesHelper.deletePreference('user_id');
-                        SharedPreferencesHelper.deletePreference('access_token');
-                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginRegisterPage()), (route) => false);
-                      },
-                      child: const Text('Logout'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
-                    ),
-                  ],
-                );
-              });
-            },
+        title: Padding(
+          padding: const EdgeInsets.only(left: 8.0, top: 10),
+          child: const Text(
+            'Food List',
+            style: TextStyle(
+              fontSize: 21,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => CartPage(foodList: foodList)));
-            }
-          ),
-        ],
+        ),
       ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 3 / 4,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 15.0),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      hintText: 'Search...',
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Logout'),
+                        content: const Text('Are you sure you want to logout?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              SharedPreferencesHelper.deletePreference(
+                                  'user_id');
+                              SharedPreferencesHelper.deletePreference(
+                                  'access_token');
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          LoginRegisterPage()),
+                                  (route) => false);
+                            },
+                            child: const Text('Logout'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                        ],
+                      );
+                    });
+              },
+            ),
+            IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CartPage(foodList: foodList)));
+                }),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(right: 10, left: 10),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 2.9 / 4,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        hintText: 'Search...',
+                      ),
                     ),
                   ),
                 ),
-              ),
-              ElevatedButton(
-                  onPressed: () async {
-                    final String keyword = _searchController.text;
-                    if (keyword.isEmpty) {
-                      fetchData(); // Fetch all items if search keyword is empty
-                    } else {
-                      fetchData(url: 'search_items/$keyword'); // Fetch items based on search keyword
-                    }
-                  },
-                  child: const Icon(Icons.search))
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: foodList.length,
-              // make this code async with refecth
-              itemBuilder: (BuildContext context, int index) {
-                final food = foodList[index];
-                final int itemId = food['id'];
-                return ListTile(
-                  leading: ImageDownloadWidget('${baseUrl}items_image/$itemId'),
-                  title: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              food['title'],
-                              style: const TextStyle(fontSize: 14.0),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              food['description'],
-                              style: const TextStyle(fontSize: 12.0),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text('Rp${food['price']}',
-                                style: const TextStyle(fontSize: 12.0)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: () {
-                          setState(() {
-                            if (quantityMap.containsKey(itemId)) {
-                              if (quantityMap[itemId]! > 0) {
-                                quantityMap[itemId] = quantityMap[itemId]! - 1;
-                              }
-                              setOrder(itemId, quantityMap[itemId]!);
-                              setInitStatus();
-                            }
-                          });
-                        },
-                      ),
-                      Text(
-                        quantityMap[itemId]?.toString() ?? '0',
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            if (quantityMap.containsKey(itemId)) {
-                              quantityMap[itemId] = quantityMap[itemId]! + 1;
-                            } else {
-                              quantityMap[itemId] = 1;
-                            }
-                            setOrder(itemId, quantityMap[itemId]!);
-                            setInitStatus();
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  onTap: () {},
-                );
-              },
+                SizedBox(width: 10.0),
+                ElevatedButton(
+                    onPressed: () async {
+                      final String keyword = _searchController.text;
+                      if (keyword.isEmpty) {
+                        fetchData(); // Fetch all items if search keyword is empty
+                      } else {
+                        fetchData(
+                            url:
+                                'search_items/$keyword'); // Fetch items based on search keyword
+                      }
+                    },
+                    child: const Icon(Icons.search))
+              ],
             ),
-          ),
-        ],
+            SizedBox(height: 10.0),
+            Expanded(
+              child: ListView.builder(
+                itemCount: foodList.length,
+                // make this code async with refecth
+                itemBuilder: (BuildContext context, int index) {
+                  final food = foodList[index];
+                  final int itemId = food['id'];
+                  return ListTile(
+                    leading:
+                        // ImageDownloadWidget('${baseUrl}items_image/$itemId'),
+                        SizedBox(
+                      height: 100, // Specify your desired height
+                      width: 100, // Specify your desired width
+                      child: Image.network(
+                        '${baseUrl}items_image/$itemId',
+                        fit: BoxFit
+                            .cover, // Adjust this according to your requirement
+                      ),
+                    ),
+                    title: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                food['title'],
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight
+                                        .bold), // Mengubah ukuran dan gaya judul
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                food['description'],
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                'Rp${food['price']}',
+                                style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Colors
+                                        .green), // Mengubah ukuran dan warna harga
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          iconSize: 15.0,
+                          onPressed: () {
+                            setState(() {
+                              if (quantityMap.containsKey(itemId)) {
+                                if (quantityMap[itemId]! > 0) {
+                                  quantityMap[itemId] =
+                                      quantityMap[itemId]! - 1;
+                                }
+                              }
+                            });
+                          },
+                        ),
+                        Text(
+                          quantityMap[itemId]?.toString() ?? '0',
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          iconSize: 15.0,
+                          onPressed: () {
+                            setState(() {
+                              if (quantityMap.containsKey(itemId)) {
+                                quantityMap[itemId] = quantityMap[itemId]! + 1;
+                              } else {
+                                quantityMap[itemId] = 1;
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    onTap: () {},
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
