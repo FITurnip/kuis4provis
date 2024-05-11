@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:kuis4/auth/shared_preferences_helper.dart';
 
 class ImageDownloadWidget extends StatefulWidget {
   String imgUrl;
@@ -22,8 +23,8 @@ class _ImageDownloadWidgetState extends State<ImageDownloadWidget> {
   }
 
   Future<void> fetchImage() async {
-    String accessToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZyYW5rdGVzdCIsImV4cCI6MTcxNTQ0NDkxN30.OZ2iiNspE0WBz2tnFdr0RbMoojBU1OoTy0abwj8nDbQ"; // Replace with your actual access token
+    String accessToken = await SharedPreferencesHelper.getPreference('access_token');
+    String userId = '${await SharedPreferencesHelper.getPreference('user_id')}';
 
     try {
       http.Response response = await http.get(
@@ -31,7 +32,7 @@ class _ImageDownloadWidgetState extends State<ImageDownloadWidget> {
         headers: {
           'Authorization':
               'Bearer $accessToken', // Include OAuth token in headers
-          'Client-ID': '8',
+          'Client-ID': userId,
         },
       );
 

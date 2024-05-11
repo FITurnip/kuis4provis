@@ -1,30 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:kuis4/auth/shared_preferences_helper.dart';
+import 'package:kuis4/barayafood_uri.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class PaymentPage extends StatelessWidget {
-  late final List<Map<String, dynamic>> foodList;
+class PaymentPage extends StatefulWidget {
+  final List<Map<String, dynamic>> foodList;
 
   PaymentPage({required this.foodList});
 
-  final List<Map<String, dynamic>> cartItems = [
-    {
-      "item_id": 1,
-      "user_id": 1,
-      "quantity": 2,
-      "id": 1
-    },
-    {
-      "item_id": 2,
-      "user_id": 1,
-      "quantity": 1,
-      "id": 2
-    },
-    {
-      "item_id": 3,
-      "user_id": 1,
-      "quantity": 3,
-      "id": 3
+  @override
+  _PaymentPageState createState() => _PaymentPageState();
+}
+
+class _PaymentPageState extends State<PaymentPage> {
+  late List<Map<String, dynamic>> cartItems = []; // Initialize cartItems as an empty list
+  late String status = "";
+  late String clientId = '', clientToken = '';
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCartItems();
+  }
+
+  void fetchCartItems() async {
+    clientId = '${await SharedPreferencesHelper.getPreference('user_id')}';
+    clientToken = await SharedPreferencesHelper.getPreference('access_token');
+
+    final response = await http.get(
+      Uri.parse('${baseUrl}carts/${clientId}?skip=0&limit=100'),
+      headers: {
+        'Authorization': 'Bearer $clientToken',
+        'Client-ID': clientId,
+      },
+    );
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = json.decode(response.body);
+      setState(() {
+        cartItems = responseData.map((item) => item as Map<String, dynamic>).toList();
+      });
+    } else {
+      throw Exception('Failed to load cart items');
     }
-  ];
+  }
+
+  void makeOrder() async {
+    final statusResponse = await http.post(
+      Uri.parse(baseUrl + 'pembayaran/$clientId'),
+      headers: {
+        'Authorization': 'Bearer $clientToken',
+        'Client-ID': clientId,
+      },
+      body: json.encode({
+        'user_id': clientId
+      })
+    );
+
+    if (statusResponse.statusCode == 200) {
+      print('berhasil');
+    } else {
+      throw Exception('Failed to get status');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +71,7 @@ class PaymentPage extends StatelessWidget {
     int totalPriceAllItems = 0;
 
     for (final cartItem in cartItems) {
-      final foodItem = foodList.firstWhere((food) => food['id'] == cartItem['item_id']);
+      final foodItem = widget.foodList.firstWhere((food) => food['id'] == cartItem['item_id']);
       final totalPrice = cartItem['quantity'] * foodItem['price'];
       totalItems += cartItem['quantity'] as int;
       totalPriceAllItems += totalPrice as int;
@@ -50,7 +89,7 @@ class PaymentPage extends StatelessWidget {
               itemCount: cartItems.length,
               itemBuilder: (BuildContext context, int index) {
                 final cartItem = cartItems[index];
-                final foodItem = foodList.firstWhere((food) => food['id'] == cartItem['item_id']);
+                final foodItem = widget.foodList.firstWhere((food) => food['id'] == cartItem['item_id']);
                 final totalPrice = cartItem['quantity'] * foodItem['price'];
 
                 return ListTile(
@@ -98,9 +137,17 @@ class PaymentPage extends StatelessWidget {
                 Text('Total Price All Items: Rp$totalPriceAllItems'),
                 ElevatedButton(
                   onPressed: () {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    makeOrder();
+                    setState(() {
+                      _isLoading = false;
+                    });
                     Navigator.pop(context);
+                    setState(() {});
                   },
-                  child: Text('Order'),
+                  child: _isLoading ? CircularProgressIndicator() : Text('Order'),
                 ),
               ],
             ),

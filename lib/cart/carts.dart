@@ -52,7 +52,7 @@ class _CartPageState extends State<CartPage> {
 
       if (statusResponse.statusCode == 200) {
         final dynamic statusData = json.decode(statusResponse.body);
-        final String curStatus = statusData['status']['status'] ?? 'No Order';
+        final String curStatus = (cartItems.length > 0 ? statusData['status']['status'] : 'No Order');
         setState(() {
           status = curStatus;
         });
@@ -76,25 +76,51 @@ class _CartPageState extends State<CartPage> {
       })
     );
 
-    print('body');
     if (statusResponse.statusCode == 200) {
-      final dynamic statusData = json.decode(statusResponse.body);
-      final String curStatus = statusData['status']['status'] ?? 'No Order';
-      setState(() {
-        status = curStatus;
-      });
+      print('berhasil');
     } else {
       throw Exception('Failed to get status');
     }
   }
 
   void refetchCartItems() async {
+    print('status' + status);
     switch(status) {
       case 'belum_bayar':
       setStatus('pembayaran');
       break;
+      case 'sudah_bayar':
+      setStatus('set_status_penjual_terima');
+      break;
+      case 'pesanan_diterima':
+      setStatus('set_status_diantar');
+      break;
+      case 'pesanaan_diantar':
+      setStatus('set_status_diterima');
+      break;
       default:
       break;
+    }
+    fetchCartItems();
+  }
+
+  void clearCartItems() async {
+    final statusResponse = await http.delete(
+      Uri.parse(baseUrl + 'clear_whole_carts_by_userid/$clientId'),
+      headers: {
+        'Authorization': 'Bearer $clientToken',
+        'Client-ID': clientId,
+      },
+      body: json.encode({
+        'user_id': clientId
+      })
+    );
+
+    print('body');
+    if (statusResponse.statusCode == 200) {
+      fetchCartItems();
+    } else {
+      throw Exception('Failed to get status');
     }
   }
 
@@ -111,7 +137,14 @@ class _CartPageState extends State<CartPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Status : ${status}'),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Status :'),
+                    SizedBox(width: MediaQuery.of(context).size.width / 3, child: Text('${status}', overflow: TextOverflow.clip,)),
+                  ],
+                ),
                 ElevatedButton(
                   onPressed: refetchCartItems, // Refresh button now refreshes the cart items
                   child: Icon(Icons.refresh),
@@ -161,16 +194,16 @@ class _CartPageState extends State<CartPage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ElevatedButton(
-                onPressed: () {
-                  // Add your clear cart logic here
-                },
+                onPressed: (status != "belum_bayar" ? null : () {
+                  clearCartItems();
+                }),
                 child: Text('Clear Cart'),
               ),
               ElevatedButton(
-                onPressed: () {
+                onPressed: (status != "belum_bayar" ? null : () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: ((context) => PaymentPage(foodList: widget.foodList))));
-                },
+                }),
                 child: Text('Checkout'),
               ),
             ],
