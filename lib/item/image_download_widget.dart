@@ -5,7 +5,7 @@ import 'package:kuis4/auth/shared_preferences_helper.dart';
 
 class ImageDownloadWidget extends StatefulWidget {
   String imgUrl;
-  ImageDownloadWidget(imgUrl) : this.imgUrl = imgUrl;
+  ImageDownloadWidget(this.imgUrl, {super.key});
 
   @override
   _ImageDownloadWidgetState createState() => _ImageDownloadWidgetState();
@@ -31,7 +31,7 @@ class _ImageDownloadWidgetState extends State<ImageDownloadWidget> {
         Uri.parse(imageUrl),
         headers: {
           'Authorization':
-              'Bearer $accessToken', // Include OAuth token in headers
+              'Bearer $accessToken',
           'Client-ID': userId,
         },
       );
@@ -52,9 +52,9 @@ class _ImageDownloadWidgetState extends State<ImageDownloadWidget> {
   @override
   Widget build(BuildContext context) {
     if (imageData == null) {
-      return CircularProgressIndicator(); // Show loading indicator while fetching image
+      return CircularProgressIndicator();
     } else {
-      return Image.memory(imageData!, width: 60, height: 60, fit: BoxFit.cover,); // Display the downloaded image
+      return Image.memory(imageData!, width: 60, height: 60, fit: BoxFit.cover,);
     }
   }
 }
