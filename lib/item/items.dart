@@ -27,8 +27,10 @@ class _FoodListPageState extends State<FoodListPage> {
   Map<int, int> quantityMap = {};
 
   void fetchData() async {
-    final String clientId = '${await SharedPreferencesHelper.getPreference('user_id')}';
-    final String clientToken = await SharedPreferencesHelper.getPreference('access_token');
+    final String clientId =
+        '${await SharedPreferencesHelper.getPreference('user_id')}';
+    final String clientToken =
+        await SharedPreferencesHelper.getPreference('access_token');
 
     final response = await http.get(
       Uri.parse('${baseUrl}items'),
@@ -57,137 +59,172 @@ class _FoodListPageState extends State<FoodListPage> {
       appBar: AppBar(
         title: const Text('Food List'),
       ),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              showDialog(context: context, builder: (context) {
-                return AlertDialog(
-                  title: const Text('Logout'),
-                  content: const Text('Are you sure you want to logout?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        SharedPreferencesHelper.deletePreference('user_id');
-                        SharedPreferencesHelper.deletePreference('access_token');
-                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginRegisterPage()), (route) => false);
-                      },
-                      child: const Text('Logout'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
-                    ),
-                  ],
-                );
-              });
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => CartPage(foodList: foodList)));
-            }
-          ),
-        ],
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Logout'),
+                        content: const Text('Are you sure you want to logout?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              SharedPreferencesHelper.deletePreference(
+                                  'user_id');
+                              SharedPreferencesHelper.deletePreference(
+                                  'access_token');
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          LoginRegisterPage()),
+                                  (route) => false);
+                            },
+                            child: const Text('Logout'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                        ],
+                      );
+                    });
+              },
+            ),
+            IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CartPage(foodList: foodList)));
+                }),
+          ],
+        ),
       ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 3 / 4,
-                child: const Padding(
-                  padding: EdgeInsets.only(left: 15.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search...',
+      body: Padding(
+        padding: const EdgeInsets.only(right: 10, left: 10),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 3.0 / 4,
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 15, right: 10),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search...',
+                      ),
                     ),
                   ),
                 ),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    // Add your search onPressed logic here
-                  },
-                  child: const Icon(Icons.search))
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: foodList.length,
-              itemBuilder: (BuildContext context, int index) {
-                final food = foodList[index];
-                final int itemId = food['id'];
-                return ListTile(
-                  leading: ImageDownloadWidget('${baseUrl}items_image/$itemId'),
-                  title: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              food['title'],
-                              style: const TextStyle(fontSize: 14.0),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              food['description'],
-                              style: const TextStyle(fontSize: 12.0),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text('Rp${food['price']}',
-                                style: const TextStyle(fontSize: 12.0)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: () {
-                          setState(() {
-                            if (quantityMap.containsKey(itemId)) {
-                              if (quantityMap[itemId]! > 0) {
-                                quantityMap[itemId] = quantityMap[itemId]! - 1;
-                              }
-                            }
-                          });
-                        },
-                      ),
-                      Text(
-                        quantityMap[itemId]?.toString() ?? '0',
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          setState(() {
-                            if (quantityMap.containsKey(itemId)) {
-                              quantityMap[itemId] = quantityMap[itemId]! + 1;
-                            } else {
-                              quantityMap[itemId] = 1;
-                            }
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  onTap: () {
-                    // Handle item tap
-                  },
-                );
-              },
+                ElevatedButton(
+                    onPressed: () {
+                      // Add your search onPressed logic here
+                    },
+                    child: const Icon(Icons.search))
+              ],
             ),
-          ),
-        ],
+            SizedBox(height: 10.0),
+            Expanded(
+              child: ListView.builder(
+                itemCount: foodList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final food = foodList[index];
+                  final int itemId = food['id'];
+                  return ListTile(
+                    leading: SizedBox(
+                      height: 100, // Specify your desired height
+                      width: 100, // Specify your desired width
+                      child: Image.network(
+                        '${baseUrl}items_image/$itemId',
+                        fit: BoxFit
+                            .cover, // Adjust this according to your requirement
+                      ),
+                    ),
+                    title: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                food['title'],
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight
+                                        .bold), // Mengubah ukuran dan gaya judul
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                food['description'],
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                'Rp${food['price']}',
+                                style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Colors
+                                        .green), // Mengubah ukuran dan warna harga
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          iconSize: 15.0,
+                          onPressed: () {
+                            setState(() {
+                              if (quantityMap.containsKey(itemId)) {
+                                if (quantityMap[itemId]! > 0) {
+                                  quantityMap[itemId] =
+                                      quantityMap[itemId]! - 1;
+                                }
+                              }
+                            });
+                          },
+                        ),
+                        Text(
+                          quantityMap[itemId]?.toString() ?? '0',
+                          style: const TextStyle(fontSize: 15),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          iconSize: 15.0,
+                          onPressed: () {
+                            setState(() {
+                              if (quantityMap.containsKey(itemId)) {
+                                quantityMap[itemId] = quantityMap[itemId]! + 1;
+                              } else {
+                                quantityMap[itemId] = 1;
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      // Handle item tap
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

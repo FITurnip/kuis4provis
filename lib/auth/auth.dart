@@ -45,6 +45,7 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
             )
           : RegisterForm(
               toggleForm: _toggleForm,
+              isLoading: _isLoading,
               onRegister: _register), // Pass register method to RegisterForm
     );
   }
@@ -164,7 +165,15 @@ class LoginForm extends StatelessWidget {
                       usernameController.text.toString(),
                       passwordController.text.toString(),
                     ),
-            child: isLoading ? CircularProgressIndicator() : Text('Login'),
+            child: isLoading
+                ? Container(
+                    height: 15,
+                    width: 15,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 4,
+                    ),
+                  )
+                : Text('Login'),
           ),
           SizedBox(height: 20.0),
           TextButton(
@@ -184,9 +193,13 @@ class LoginForm extends StatelessWidget {
 
 class RegisterForm extends StatelessWidget {
   final VoidCallback toggleForm;
-  final Function(String, String) onRegister; // Add onRegister function
+  final bool isLoading;
+  final Function(String, String) onRegister;
 
-  RegisterForm({required this.toggleForm, required this.onRegister});
+  RegisterForm(
+      {required this.toggleForm,
+      required this.isLoading,
+      required this.onRegister});
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -210,13 +223,21 @@ class RegisterForm extends StatelessWidget {
           ),
           SizedBox(height: 20.0),
           ElevatedButton(
-            onPressed: () {
-              onRegister(
-                usernameController.text.toString(),
-                passwordController.text.toString(),
-              );
-            },
-            child: Text('Register'),
+            onPressed: isLoading
+                ? null
+                : () => onRegister(
+                      usernameController.text.toString(),
+                      passwordController.text.toString(),
+                    ),
+            child: isLoading
+                ? Container(
+                    height: 15,
+                    width: 15,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 4,
+                    ),
+                  )
+                : Text('Register'),
           ),
           SizedBox(height: 20.0),
           TextButton(
