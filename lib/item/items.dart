@@ -27,9 +27,17 @@ class _FoodListPageState extends State<FoodListPage> {
 
   Map<int, int> quantityMap = {};
 
+<<<<<<< HEAD
   Future<List<Map<String, dynamic>>> fetchData({String url = "items"}) async {
   final String clientId = '${await SharedPreferencesHelper.getPreference('user_id')}';
   final String clientToken = await SharedPreferencesHelper.getPreference('access_token');
+=======
+  void fetchData() async {
+    final String clientId =
+        '${await SharedPreferencesHelper.getPreference('user_id')}';
+    final String clientToken =
+        await SharedPreferencesHelper.getPreference('access_token');
+>>>>>>> refs/remotes/origin/main
 
   final response = await http.get(
     Uri.parse(baseUrl + url),
@@ -58,42 +66,52 @@ class _FoodListPageState extends State<FoodListPage> {
       appBar: AppBar(
         title: const Text('Food List'),
       ),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              showDialog(context: context, builder: (context) {
-                return AlertDialog(
-                  title: const Text('Logout'),
-                  content: const Text('Are you sure you want to logout?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        SharedPreferencesHelper.deletePreference('user_id');
-                        SharedPreferencesHelper.deletePreference('access_token');
-                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginRegisterPage()), (route) => false);
-                      },
-                      child: const Text('Logout'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
-                    ),
-                  ],
-                );
-              });
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => CartPage(foodList: foodList)));
-            }
-          ),
-        ],
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Logout'),
+                        content: const Text('Are you sure you want to logout?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              SharedPreferencesHelper.deletePreference(
+                                  'user_id');
+                              SharedPreferencesHelper.deletePreference(
+                                  'access_token');
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          LoginRegisterPage()),
+                                  (route) => false);
+                            },
+                            child: const Text('Logout'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('Cancel'),
+                          ),
+                        ],
+                      );
+                    });
+              },
+            ),
+            IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CartPage(foodList: foodList)));
+                }),
+          ],
+        ),
       ),
       body: Column(
         children: [
