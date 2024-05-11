@@ -40,6 +40,7 @@ class _CartPageState extends State<CartPage> {
       final List<dynamic> responseData = json.decode(response.body);
       setState(() {
         cartItems = responseData.map((item) => item as Map<String, dynamic>).toList();
+        print(cartItems);
       });
 
       final statusResponse = await http.get(
@@ -64,6 +65,74 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
+  void removeOrder(int cartId) async {
+    print('berhasil');
+    if (clientId.isEmpty || clientToken.isEmpty) {
+      print('Error: clientId or clientToken is empty.');
+      return;
+    }
+
+    final Map<String, dynamic> requestBody = {
+      "cart_id": cartId,
+    };
+
+    print("Request body: ${jsonEncode(requestBody)}");
+
+    final response = await http.delete(
+      Uri.parse('${baseUrl}carts/${cartId}'),
+      headers: {
+        'Authorization': 'Bearer $clientToken',
+        'Client-ID': clientId,
+        'Content-Type': 'application/json', // Specify content type as JSON
+      },
+      body: jsonEncode(requestBody), // Encode the request body as JSON
+    );
+
+    print("Response status code: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      print("Order successfully delete.");
+    } else {
+      throw Exception('Failed to delete order. Status code: ${response.statusCode}');
+    }
+    
+  }
+
+  void setOrder(int itemId, int total) async {
+    if (clientId.isEmpty || clientToken.isEmpty) {
+      print('Error: clientId or clientToken is empty.');
+      return;
+    }
+
+    final Map<String, dynamic> requestBody = {
+      "item_id": itemId,
+      "user_id": int.parse(clientId),
+      "quantity": total,
+    };
+
+    print("Request body: ${jsonEncode(requestBody)}");
+
+    final response = await http.post(
+      Uri.parse('${baseUrl}carts/'),
+      headers: {
+        'Authorization': 'Bearer $clientToken',
+        'Client-ID': clientId,
+        'Content-Type': 'application/json', // Specify content type as JSON
+      },
+      body: jsonEncode(requestBody), // Encode the request body as JSON
+    );
+
+    print("Response status code: ${response.statusCode}");
+    print("Response body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      print("Order successfully set.");
+    } else {
+      throw Exception('Failed to set order. Status code: ${response.statusCode}');
+    }
+  }
+
   void setStatus(String url) async {
     final statusResponse = await http.post(
       Uri.parse(baseUrl + url + '/$clientId'),
@@ -78,6 +147,26 @@ class _CartPageState extends State<CartPage> {
 
     if (statusResponse.statusCode == 200) {
       print('berhasil');
+    } else {
+      throw Exception('Failed to get status');
+    }
+  }
+
+  void setInitStatus() async {
+    final statusResponse = await http.post(
+      Uri.parse(baseUrl + 'set_status_harap_bayar/$clientId'),
+      headers: {
+        'Authorization': 'Bearer $clientToken',
+        'Client-ID': clientId,
+      },
+      body: json.encode({
+        'user_id': clientId
+      })
+    );
+
+    print('body');
+    if (statusResponse.statusCode == 200) {
+      fetchCartItems();
     } else {
       throw Exception('Failed to get status');
     }
@@ -170,14 +259,24 @@ class _CartPageState extends State<CartPage> {
                           IconButton(
                             icon: Icon(Icons.remove),
                             onPressed: () {
-                              // Decrease quantity logic
+                              setState(() {
+                                cartItem['quantity']--;
+                              });
+                              removeOrder(cartItem['id']);
+                              setOrder(foodItem['id'], cartItem['quantity']);
+                              setInitStatus();
                             },
                           ),
                           Text('${cartItem['quantity']}'),
                           IconButton(
                             icon: Icon(Icons.add),
                             onPressed: () {
-                              // Increase quantity logic
+                              setState(() {
+                                cartItem['quantity']++;
+                              });
+                              removeOrder(cartItem['id']);
+                              setOrder(foodItem['id'], cartItem['quantity']);
+                              setInitStatus();
                             },
                           ),
                         ],
