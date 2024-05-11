@@ -64,9 +64,11 @@ class _LoginRegisterPageState extends State<LoginRegisterPage> {
         body: jsonEncode({"username": username, "password": password}),
       );
 
+      print(jsonEncode({"username": username, "password": password}));
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
-
+        print(data);
+        
         await SharedPreferencesHelper.savePreference(
             'user_id', data['user_id']);
         await SharedPreferencesHelper.savePreference(

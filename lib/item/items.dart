@@ -6,7 +6,7 @@ import 'package:kuis4/cart/carts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:kuis4/test_oauth.dart';
+import 'package:kuis4/item/image_download_widget.dart';
 
 class FoodListPage extends StatefulWidget {
   const FoodListPage({super.key});
@@ -179,10 +179,10 @@ class _FoodListPageState extends State<FoodListPage> {
                   content: const Text('Are you sure you want to logout?'),
                   actions: [
                     TextButton(
-                      onPressed: () {
-                        SharedPreferencesHelper.deletePreference('user_id');
-                        SharedPreferencesHelper.deletePreference('access_token');
-                        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginRegisterPage()), (route) => false);
+                      onPressed: () async {
+                        await SharedPreferencesHelper.deletePreference('user_id');
+                        await SharedPreferencesHelper.deletePreference('access_token');
+                        await Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginRegisterPage()), (route) => false);
                       },
                       child: const Text('Logout'),
                     ),
