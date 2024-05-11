@@ -27,17 +27,9 @@ class _FoodListPageState extends State<FoodListPage> {
 
   Map<int, int> quantityMap = {};
 
-<<<<<<< HEAD
   Future<List<Map<String, dynamic>>> fetchData({String url = "items"}) async {
   final String clientId = '${await SharedPreferencesHelper.getPreference('user_id')}';
   final String clientToken = await SharedPreferencesHelper.getPreference('access_token');
-=======
-  void fetchData() async {
-    final String clientId =
-        '${await SharedPreferencesHelper.getPreference('user_id')}';
-    final String clientToken =
-        await SharedPreferencesHelper.getPreference('access_token');
->>>>>>> refs/remotes/origin/main
 
   final response = await http.get(
     Uri.parse(baseUrl + url),
