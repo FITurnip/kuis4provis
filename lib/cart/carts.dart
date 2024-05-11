@@ -79,7 +79,7 @@ class _CartPageState extends State<CartPage> {
     print('body');
     if (statusResponse.statusCode == 200) {
       final dynamic statusData = json.decode(statusResponse.body);
-      final String curStatus = statusData['status']['status'] ?? 'No Order';
+      final String curStatus = statusData['status'] ?? 'No Order';
       setState(() {
         status = curStatus;
       });
@@ -92,6 +92,12 @@ class _CartPageState extends State<CartPage> {
     switch(status) {
       case 'belum_bayar':
       setStatus('pembayaran');
+      break;
+      case 'sudah bayar':
+      setStatus('set_status_penjual_terima');
+      break;
+      case 'penjual terima':
+      setStatus('set_status_diantar');
       break;
       default:
       break;
