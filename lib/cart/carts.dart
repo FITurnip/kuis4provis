@@ -78,30 +78,31 @@ class _CartPageState extends State<CartPage> {
 
     print('body');
     if (statusResponse.statusCode == 200) {
-      final dynamic statusData = json.decode(statusResponse.body);
-      final String curStatus = statusData['status'] ?? 'No Order';
-      setState(() {
-        status = curStatus;
-      });
+      print('berhasil');
     } else {
       throw Exception('Failed to get status');
     }
   }
 
   void refetchCartItems() async {
+    print('status' + status);
     switch(status) {
       case 'belum_bayar':
       setStatus('pembayaran');
       break;
-      case 'sudah bayar':
+      case 'sudah_bayar':
       setStatus('set_status_penjual_terima');
       break;
-      case 'penjual terima':
+      case 'pesanan_diterima':
       setStatus('set_status_diantar');
+      break;
+      case 'pesanaan_diantar':
+      setStatus('set_status_diterima');
       break;
       default:
       break;
     }
+    fetchCartItems();
   }
 
   @override
@@ -117,7 +118,14 @@ class _CartPageState extends State<CartPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Status : ${status}'),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Status :'),
+                    SizedBox(width: MediaQuery.of(context).size.width / 3, child: Text('${status}', overflow: TextOverflow.clip,)),
+                  ],
+                ),
                 ElevatedButton(
                   onPressed: refetchCartItems, // Refresh button now refreshes the cart items
                   child: Icon(Icons.refresh),
